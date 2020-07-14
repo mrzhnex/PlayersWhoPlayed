@@ -8,7 +8,7 @@ namespace PlayersWhoPlayed
     public static class Global
     {
         public static readonly string FileName = "PlayersWhoPlayed.txt";
-        public static readonly string FilePath = "/etc/PluginData";
+        public static readonly string FilePath = "/etc/scpsl/Plugin";
         public static readonly string VoidData = "";
         public static readonly float MinimumTimeToAllowPlayer = 180.0f;
 
@@ -16,14 +16,15 @@ namespace PlayersWhoPlayed
         {
             string allowedMessage = "Игроки, поигравшие **достаточно** на сервере " + serverName + ":\n";
             string refusedMessage = "Игроки, поигравшие **недостаточно** на сервере " + serverName + ":\n";
-            foreach (KeyValuePair<string, PlayerData> playerTimeOnServer in PlayersTimeOnServer)
+            Dictionary<string, PlayerData> tempPlayersTimeOnServer = PlayersTimeOnServer;
+            PlayersTimeOnServer = new Dictionary<string, PlayerData>();
+            foreach (KeyValuePair<string, PlayerData> playerTimeOnServer in tempPlayersTimeOnServer)
             {
                 if (playerTimeOnServer.Value.Time > MinimumTimeToAllowPlayer)
                     allowedMessage = allowedMessage + playerTimeOnServer.Value.Nickname + "@" + playerTimeOnServer.Key.Replace("@steam", string.Empty) + " был на сервере " + GetMinesAndSecond((int)playerTimeOnServer.Value.Time)[0] + " минут и " + GetMinesAndSecond((int)playerTimeOnServer.Value.Time)[1] + " секунд. Игровые роли: " + playerTimeOnServer.Value.Roles + "\n";
                 else
                     refusedMessage = refusedMessage + playerTimeOnServer.Value.Nickname + "@" + playerTimeOnServer.Key.Replace("@steam", string.Empty) + " был на сервере " + GetMinesAndSecond((int)playerTimeOnServer.Value.Time)[0] + " минут и " + GetMinesAndSecond((int)playerTimeOnServer.Value.Time)[1] + " секунд. Игровые роли: " + playerTimeOnServer.Value.Roles + "\n";
             }
-            PlayersTimeOnServer = new Dictionary<string, PlayerData>();
             SaveMessageOnDisk("-------------------------Round: " + DateTime.Now.ToString() + "-------------------------\n" + allowedMessage + "\n" + refusedMessage);
         }
 
